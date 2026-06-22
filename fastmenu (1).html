@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FastMenu — Cantina Escolar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:   #FFFFFF;
+      --orange:  #FF7A00;
+      --dark:    #0F172A;
+      --gray:    #64748B;
+      --border:  #E5E7EB;
+      --bg:      #F8FAFC;
+      --card-shadow: 0 2px 12px rgba(15,23,42,.07);
+      --hover-shadow: 0 8px 28px rgba(255,122,0,.15);
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ─────────────────────────────────────── */
+    .header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 68px;
+      display: flex;
+      align-items: center;
+      padding: 0 clamp(16px, 4vw, 48px);
+      gap: 24px;
+    }
+
+    /* logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #FF7A00, #FF9A40);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+    }
+    .logo-icon svg { width: 20px; height: 20px; fill: #fff; }
+    .logo-text { font-size: 1.25rem; font-weight: 700; line-height: 1; }
+    .logo-text span:first-child { color: var(--dark); }
+    .logo-text span:last-child  { color: var(--orange); }
+
+    /* nav */
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      justify-content: center;
+    }
+    .nav-btn {
+      padding: 7px 18px;
+      border: none;
+      background: transparent;
+      border-radius: 50px;
+      font-family: inherit;
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .nav-btn:hover  { background: #FFF4E8; color: var(--orange); }
+    .nav-btn.active { background: var(--orange); color: var(--white); }
+
+    /* search */
+    .search-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      width: 16px; height: 16px;
+      color: var(--gray);
+      pointer-events: none;
+    }
+    .search-input {
+      padding: 8px 16px 8px 36px;
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      font-family: inherit;
+      font-size: .875rem;
+      color: var(--dark);
+      background: var(--white);
+      width: 220px;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .search-input::placeholder { color: #94A3B8; }
+    .search-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,122,0,.12); }
+
+    /* mobile menu toggle */
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--dark);
+    }
+
+    /* ── HERO ─────────────────────────────────────── */
+    .hero {
+      margin-top: 68px;
+      padding: 80px clamp(16px, 5vw, 64px) 64px;
+      max-width: 1200px;
+      margin-inline: auto;
+      margin-top: 68px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      min-height: calc(100vh - 68px);
+      max-height: 640px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #FFF4E8;
+      color: var(--orange);
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 50px;
+      margin-bottom: 20px;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--orange);
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--dark);
+      margin-bottom: 16px;
+    }
+    .hero-title em { font-style: normal; color: var(--orange); }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--gray);
+      max-width: 400px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+    }
+    .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--dark); }
+    .stat-lbl { font-size: .75rem; color: var(--gray); font-weight: 400; }
+
+    /* hero illustration */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-blob {
+      width: 380px;
+      height: 380px;
+      background: linear-gradient(135deg, #FFF4E8 0%, #FFE8CC 100%);
+      border-radius: 50% 40% 60% 45% / 45% 60% 40% 55%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* food card grid in hero */
+    .food-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 24px;
+      width: 100%;
+    }
+    .food-pill {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.07);
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .food-pill .emoji { font-size: 1.5rem; }
+    .food-pill:nth-child(5) {
+      grid-column: 1 / -1;
+      justify-content: center;
+    }
+
+    /* floating badge */
+    .float-badge {
+      position: absolute;
+      background: var(--orange);
+      color: var(--white);
+      font-size: .75rem;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 50px;
+      white-space: nowrap;
+      box-shadow: 0 6px 20px rgba(255,122,0,.35);
+    }
+    .float-badge.top    { top: 16px; right: -16px; }
+    .float-badge.bottom { bottom: 32px; left: -12px; }
+
+    /* ── CATALOG SECTION ───────────────────────────── */
+    .catalog {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 48px) 80px;
+    }
+
+    .section-head {
+      margin-bottom: 40px;
+    }
+    .section-eyebrow {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .section-line {
+      width: 40px;
+      height: 3px;
+      background: var(--orange);
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+
+    /* empty state */
+    .empty {
+      text-align: center;
+      padding: 64px 0;
+      color: var(--gray);
+    }
+    .empty svg { width: 64px; height: 64px; margin-bottom: 16px; opacity: .3; }
+    .empty p { font-size: .95rem; }
+
+    /* category label */
+    .cat-label {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin: 40px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .cat-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .cat-label.hidden { display: none; }
+
+    /* ── PRODUCT GRID ─────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: transform .22s ease, box-shadow .22s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--hover-shadow);
+    }
+
+    .card-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      background: #F1F5F9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      flex-shrink: 0;
+    }
+
+    .card-body {
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-cat {
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 4px;
+    }
+
+    .card-name {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: .78rem;
+      color: var(--gray);
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .card-footer {
+      padding: 12px 16px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+    }
+
+    .card-price {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--dark);
+    }
+    .card-price span {
+      font-size: .7rem;
+      font-weight: 500;
+      color: var(--gray);
+      margin-right: 2px;
+    }
+
+    .card-tag {
+      font-size: .65rem;
+      font-weight: 600;
+      background: #F0FDF4;
+      color: #16A34A;
+      padding: 3px 8px;
+      border-radius: 50px;
+    }
+
+    .card.hidden { display: none; }
+
+    /* ── FOOTER ───────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--white);
+      padding: 28px clamp(16px, 4vw, 48px);
+      text-align: center;
+    }
+    .footer-logo { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .footer-logo span:first-child { color: var(--dark); }
+    .footer-logo span:last-child  { color: var(--orange); }
+    footer p { font-size: .8rem; color: var(--gray); }
+
+    /* ── RESPONSIVE ───────────────────────────────── */
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .hero { grid-template-columns: 1fr; max-height: none; padding-top: 48px; padding-bottom: 40px; }
+      .hero-visual { display: none; }
+      .nav { gap: 2px; }
+      .nav-btn { padding: 6px 12px; font-size: .8rem; }
+      .search-input { width: 160px; }
+    }
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      .nav { display: none; }
+      .nav.open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 68px; left: 0; right: 0;
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        padding: 12px;
+        gap: 6px;
+        z-index: 99;
+      }
+      .nav.open .nav-btn { text-align: left; border-radius: 10px; padding: 10px 16px; }
+      .mobile-toggle { display: block; }
+      .header { gap: 12px; }
+      .search-wrap { flex: 1; }
+      .search-input { width: 100%; }
+      .hero-stats { gap: 20px; }
+    }
+
+    /* no-results */
+    #no-results { display: none; }
+    #no-results.show { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     HEADER
+════════════════════════════════════ -->
+<header class="header">
+  <!-- Logo -->
+  <a href="#" class="logo">
+    <span class="logo-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26C17.81 13.47 19 11.38 19 9c0-3.87-3.13-7-7-7zm1 14h-2v-1h2v1zm0-3h-2c-.55 0-1-.45-1-1v-.28C8.78 11.13 8 10.12 8 9c0-2.21 1.79-4 4-4s4 1.79 4 4c0 1.12-.78 2.13-2 2.72V12c0 .55-.45 1-1 1z"/>
+      </svg>
+    </span>
+    <div class="logo-text">
+      <span>Fast</span><span>Menu</span>
+    </div>
+  </a>
+
+  <!-- Nav categories -->
+  <nav class="nav" id="nav">
+    <button class="nav-btn active" data-cat="all">Todos</button>
+    <button class="nav-btn" data-cat="salgados">Salgados</button>
+    <button class="nav-btn" data-cat="doces">Doces</button>
+    <button class="nav-btn" data-cat="bebidas">Bebidas</button>
+    <button class="nav-btn" data-cat="outros">Outros</button>
+  </nav>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input" id="search" type="text" placeholder="Buscar produto…" autocomplete="off" />
+  </div>
+
+  <!-- Mobile hamburger -->
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+</header>
+
+
+<!-- ════════════════════════════════════
+     HERO
+════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Cardápio Digital</div>
+    <h1 class="hero-title">Cardápio da<br/>nossa <em>cantina</em></h1>
+    <p class="hero-sub">Consulte rapidamente os produtos disponíveis e encontre seus itens favoritos sem complicação.</p>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">23+</div>
+        <div class="stat-lbl">Produtos</div>
+      </div>
+      <div>
+        <div class="stat-num">4</div>
+        <div class="stat-lbl">Categorias</div>
+      </div>
+      <div>
+        <div class="stat-num">100%</div>
+        <div class="stat-lbl">Atualizado</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-blob">
+      <div class="food-grid">
+        <div class="food-pill"><span class="emoji">🥟</span> Coxinha</div>
+        <div class="food-pill"><span class="emoji">🧀</span> Pão de Queijo</div>
+        <div class="food-pill"><span class="emoji">🥤</span> Coca-Cola</div>
+        <div class="food-pill"><span class="emoji">🍬</span> Trufa</div>
+        <div class="food-pill"><span class="emoji">🥜</span> Paçoca</div>
+      </div>
+    </div>
+    <div class="float-badge top">🔥 Mais pedidos</div>
+    <div class="float-badge bottom">✨ Sem filas</div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════
+     CATALOG
+════════════════════════════════════ -->
+<main class="catalog" id="catalog">
+  <div class="section-head">
+    <div class="section-eyebrow">Todos os produtos</div>
+    <h2 class="section-title">O que temos hoje</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Category labels (shown in "all" view) -->
+  <div class="cat-label" id="lbl-salgados">🥟 Salgados</div>
+  <div class="grid" id="grid-salgados"></div>
+
+  <div class="cat-label" id="lbl-doces">🍬 Doces</div>
+  <div class="grid" id="grid-doces"></div>
+
+  <div class="cat-label" id="lbl-bebidas">🥤 Bebidas</div>
+  <div class="grid" id="grid-bebidas"></div>
+
+  <div class="cat-label" id="lbl-outros">🛍️ Outros</div>
+  <div class="grid" id="grid-outros"></div>
+
+  <!-- No results -->
+  <div id="no-results" class="empty">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <p>Nenhum produto encontrado para "<strong id="search-term-display"></strong>"</p>
+  </div>
+</main>
+
+
+<!-- ════════════════════════════════════
+     FOOTER
+════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo"><span>Fast</span><span>Menu</span></div>
+  <p>Catálogo digital da cantina escolar &nbsp;·&nbsp; © 2026</p>
+</footer>
+
+
+<!-- ════════════════════════════════════
+     DATA + LOGIC
+════════════════════════════════════ -->
+<script>
+const PRODUCTS = [
+  // ── SALGADOS ──
+  { id:1, cat:'salgados', emoji:'🥟', name:'Coxinha', desc:'Salgado tradicional recheado com frango temperado.', price:8.00 },
+  { id:2, cat:'salgados', emoji:'🧀', name:'Pão de Queijo', desc:'Tradicional pão de queijo assado, crocante por fora e macio por dentro.', price:4.00 },
+  { id:3, cat:'salgados', emoji:'🌙', name:'Meia Lua Frita', desc:'Salgado frito recheado, crocante e saboroso.', price:8.00 },
+  { id:4, cat:'salgados', emoji:'🥧', name:'Empada de Frango', desc:'Massa leve recheada com frango temperado.', price:8.00 },
+  { id:5, cat:'salgados', emoji:'🌭', name:'Cachorro-Quente Assado', desc:'Massa assada recheada com salsicha e molho.', price:8.00 },
+  { id:6, cat:'salgados', emoji:'🌙', name:'Meia Lua Assada de Presunto e Queijo', desc:'Salgado assado recheado com presunto e queijo.', price:8.00 },
+  { id:7, cat:'salgados', emoji:'🥙', name:'Esfiha Fechada de Carne', desc:'Massa assada recheada com carne temperada.', price:8.00 },
+  { id:8, cat:'salgados', emoji:'🥙', name:'Esfiha Fechada de Frango', desc:'Massa assada recheada com frango temperado.', price:8.00 },
+
+  // ── DOCES ──
+  { id:9,  cat:'doces', emoji:'🥜', name:'Paçoca', desc:'Barra de paçoca tradicional feita à base de amendoim, prática e saborosa.', price:1.00 },
+  { id:10, cat:'doces', emoji:'🍭', name:'Pirulito 7 Belo', desc:'Pirulito sabor framboesa, clássico e muito popular entre os estudantes.', price:0.50 },
+  { id:11, cat:'doces', emoji:'🍫', name:'Trufa', desc:'Doce recheado com chocolate cremoso, ideal para uma sobremesa saborosa.', price:5.50 },
+  { id:12, cat:'doces', emoji:'🍬', name:'Trident', desc:'Chiclete sem açúcar disponível em diversos sabores refrescantes.', price:3.50 },
+  { id:13, cat:'doces', emoji:'🍫', name:'Chocolate Suflair', desc:'Barra de chocolate aerado com textura leve e sabor marcante.', price:8.00 },
+  { id:14, cat:'doces', emoji:'🍪', name:'Trento', desc:'Wafer recheado e coberto com chocolate.', price:8.00 },
+
+  // ── BEBIDAS ──
+  { id:15, cat:'bebidas', emoji:'🥤', name:'Refrigerante Conquista 200 ml', desc:'Refrigerante em embalagem individual para consumo rápido. Sabores: Cola, Limão e Guaraná.', price:2.00 },
+  { id:16, cat:'bebidas', emoji:'🍾', name:'Refrigerante Conquista 2 Litros', desc:'Refrigerante em tamanho família. Sabores: Cola, Limão e Guaraná.', price:8.00 },
+  { id:17, cat:'bebidas', emoji:'🥫', name:'Coca-Cola Lata', desc:'Refrigerante tradicional em lata gelada.', price:6.00 },
+  { id:18, cat:'bebidas', emoji:'🧃', name:'Suco Del Valle Lata', desc:'Suco pronto para consumo disponível em diversos sabores naturais.', price:6.00 },
+  { id:19, cat:'bebidas', emoji:'🍋', name:'Sprite Limão 600 ml', desc:'Refrigerante sabor limão, leve e refrescante.', price:6.00 },
+  { id:20, cat:'bebidas', emoji:'🍋', name:'Limoneto 600 ml', desc:'Bebida refrescante sabor limão.', price:6.00 },
+  { id:21, cat:'bebidas', emoji:'🥤', name:'Coca-Cola Garrafinha 200 ml', desc:'Versão compacta da Coca-Cola, perfeita para o intervalo.', price:3.00 },
+  { id:22, cat:'bebidas', emoji:'🧃', name:'X-Tapa Suco', desc:'Garrafa de suco prático e refrescante. Sabores: Uva, Frutas Cítricas e Laranja com Acerola.', price:3.50 },
+
+  // ── OUTROS ──
+  { id:23, cat:'outros', emoji:'🍿', name:'Salgadinho Kelleck', desc:'Salgadinho crocante disponível em diversos sabores: Churrasco, Pizza e outros.', price:2.25 },
+];
+
+const CAT_NAMES = {
+  salgados: '🥟 Salgados',
+  doces:    '🍬 Doces',
+  bebidas:  '🥤 Bebidas',
+  outros:   '🛍️ Outros',
+};
+
+function fmt(n) {
+  return 'R$ ' + n.toFixed(2).replace('.', ',');
+}
+
+function cardHTML(p) {
+  return `
+    <article class="card" data-cat="${p.cat}" data-name="${p.name.toLowerCase()}" data-desc="${p.desc.toLowerCase()}">
+      <div class="card-img" role="img" aria-label="${p.name}">${p.emoji}</div>
+      <div class="card-body">
+        <div class="card-cat">${CAT_NAMES[p.cat]}</div>
+        <h3 class="card-name">${p.name}</h3>
+        <p class="card-desc">${p.desc}</p>
+      </div>
+      <div class="card-footer">
+        <div class="card-price"><span>R$</span>${p.price.toFixed(2).replace('.', ',')}</div>
+        <span class="card-tag">Disponível</span>
+      </div>
+    </article>`;
+}
+
+// Render cards into their category grids
+const grids = { salgados: document.getElementById('grid-salgados'), doces: document.getElementById('grid-doces'), bebidas: document.getElementById('grid-bebidas'), outros: document.getElementById('grid-outros') };
+PRODUCTS.forEach(p => { grids[p.cat].insertAdjacentHTML('beforeend', cardHTML(p)); });
+
+// ── FILTER + SEARCH ──
+const navBtns  = document.querySelectorAll('.nav-btn');
+const allCards = () => document.querySelectorAll('.card');
+let activeCat  = 'all';
+
+function applyFilters() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  document.getElementById('search-term-display').textContent = q;
+
+  // category labels visibility
+  ['salgados','doces','bebidas','outros'].forEach(c => {
+    const lbl  = document.getElementById('lbl-' + c);
+    const show = activeCat === 'all' && q === '';
+    lbl.classList.toggle('hidden', !show);
+  });
+
+  let anyVisible = false;
+
+  allCards().forEach(card => {
+    const cardCat  = card.dataset.cat;
+    const catMatch = activeCat === 'all' || activeCat === cardCat;
+    const qMatch   = q === '' || card.dataset.name.includes(q) || card.dataset.desc.includes(q);
+    const show     = catMatch && qMatch;
+    card.classList.toggle('hidden', !show);
+    if (show) anyVisible = true;
+  });
+
+  // Hide / show empty grids when filtering by category label
+  ['salgados','doces','bebidas','outros'].forEach(c => {
+    const visible = [...document.querySelectorAll(`#grid-${c} .card:not(.hidden)`)].length > 0;
+    const lbl = document.getElementById('lbl-' + c);
+    if (activeCat === 'all' && q !== '') {
+      lbl.classList.toggle('hidden', !visible);
+    }
+  });
+
+  document.getElementById('no-results').classList.toggle('show', !anyVisible);
+}
+
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    navBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCat = btn.dataset.cat;
+    // scroll to catalog
+    document.getElementById('catalog').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    applyFilters();
+    // close mobile nav
+    document.getElementById('nav').classList.remove('open');
+  });
+});
+
+document.getElementById('search').addEventListener('input', applyFilters);
+
+// Mobile toggle
+document.getElementById('mobileToggle').addEventListener('click', () => {
+  document.getElementById('nav').classList.toggle('open');
+});
+
+// initial render
+applyFilters();
+</script>
+</body>
+</html>
